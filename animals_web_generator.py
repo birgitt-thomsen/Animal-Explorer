@@ -1,14 +1,8 @@
 """ Script to update an HTML template with serialized animal data. """
 
-import json
+from animals_api import extract_animals_data
 
 TARGET_HTML = "__REPLACE_ANIMALS_INFO__"
-
-
-def load_data(file_path):
-    """ Loads a JSON file """
-    with open(file_path, "r", encoding="utf-8") as handle:
-        return json.load(handle)
 
 
 def extract_skin_types(animals):
@@ -97,7 +91,7 @@ def write_animals_html(file_path, html):
 def main():
     """ Main function that handles the program logic """
     # load animals data
-    animals_data = load_data('animals_data.json')
+    animals_data = extract_animals_data()
 
     # load skin types
     skin_type_input = get_user_skin_type_input(animals_data)
