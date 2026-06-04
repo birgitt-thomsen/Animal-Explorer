@@ -9,7 +9,7 @@ def return_animals_data():
     """ Takes input from the user and fetches animals information """
     animal_input = input("Enter a name of an animal: ")
     animals = extract_animals_data(animal_input)
-    return animals
+    return animals, animal_input
 
 
 def serialize_animal(animal):
@@ -43,11 +43,14 @@ def serialize_animal(animal):
     return output
 
 
-def return_animals_output(animals):
+def return_animals_output(animals, search_term):
     """ Returns the animal data """
     output = ""
-    for animal in animals:
-        output += serialize_animal(animal)
+    if not animals:
+        output += (f"<h2>There are no animals containing '{search_term}'.</h2>")
+    else:
+        for animal in animals:
+            output += serialize_animal(animal)
     return output
 
 
@@ -72,10 +75,12 @@ def write_animals_html(file_path, html):
 def main():
     """ Main function that handles the program logic """
     # load animals data
-    animals_data = return_animals_data()
+    data = return_animals_data()
+    animals_data = data[0]
+    user_input = data[1]
 
     # serialized animal data
-    animals_output = return_animals_output(animals_data)
+    animals_output = return_animals_output(animals_data, user_input)
 
     # load html template
     html_orig = load_html_template('animals_template.html')
