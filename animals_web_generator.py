@@ -5,27 +5,11 @@ from animals_api import extract_animals_data
 TARGET_HTML = "__REPLACE_ANIMALS_INFO__"
 
 
-def extract_skin_types(animals):
-    """ Extract skin types from animal data """
-    skin_types = []
-    for animal in animals:
-        if "skin_type" in animal["characteristics"]:
-            if animal["characteristics"]["skin_type"] not in skin_types:
-                skin_types.append(animal["characteristics"]["skin_type"])
-    return skin_types
-
-
-def get_user_skin_type_input(animals):
-    """ Returns the user skin type input """
-    while True:
-        skin_types = extract_skin_types(animals)
-        print(f"\nThe following skin types are available:"
-              f"\n{'\n'.join(skin_types)}")
-        skin_type_input = input("\nPlease enter the skin type (or press "
-                                "Enter to show all): ")
-        if skin_type_input.capitalize() in skin_types or skin_type_input == "":
-            return skin_type_input
-        print(f"\n'{skin_type_input}' is not a valid skin type. Please try again.")
+def return_animals_data():
+    """ Takes input from the user and fetches animals information """
+    animal_input = input("Enter a name of an animal: ")
+    animals = extract_animals_data(animal_input)
+    return animals
 
 
 def serialize_animal(animal):
@@ -35,38 +19,35 @@ def serialize_animal(animal):
     output += f"<div class='card__title'>{animal['name']}</div>\n"
     output += '<div class="card__text">'
     output += '<ul class="animal_list">'
-    output += (f"<li class='animal_item'><strong>Scientific Name:</strong>"
-               f" {animal['taxonomy']['scientific_name']}</li>\n")
-    output += (f"<li class='animal_item'><strong>Diet:</strong> "
-               f"{animal['characteristics']['diet']}</li>\n")
-    output += (f"<li class='animal_item'><strong>Location:</strong> "
-               f"{", ".join(animal["locations"])}</li>\n")
-    # only set 'type' if it exists
+    if "scientific_name" in animal["taxonomy"]:
+        output += (f"<li class='animal_item'><strong>Scientific Name: "
+                   f"</strong>{animal['taxonomy']['scientific_name']}</li>\n")
+    if "diet" in animal["characteristics"]:
+        output += (f"<li class='animal_item'><strong>Diet: </strong"
+                   f">{animal['characteristics']['diet']}</li>\n")
+    if animal['locations']:
+        output += (f"<li class='animal_item'><strong>Location: </strong> "
+                   f"{", ".join(animal["locations"])}</li>\n")
     if "type" in animal["characteristics"]:
-        output += (f"<li class='animal_item'><strong>Type:</strong> "
-                   f"{animal["characteristics"]["type"]}</li>\n")
-    # only set 'color' if it exists
+        output += (f"<li class='animal_item'><strong>Type: </strong> "
+                   f"{animal['characteristics']['type'].capitalize()}</li>\n")
     if "color" in animal["characteristics"]:
-        output += (f"<li class='animal_item'><strong>Color:</strong>"
-                   f" {animal['characteristics']['color']}</li>\n")
-    # only set 'skin_type' if it exists
+        output += (f"<li class='animal_item'><strong>Color: </strong>"
+                   f"{animal['characteristics']['color']}</li>\n")
     if "skin_type" in animal["characteristics"]:
-        output += (f"<li class='animal_item'><strong>Skin Type:</strong>"
-                   f" {animal['characteristics']['skin_type']}</li>\n")
+        output += (f"<li class='animal_item'><strong>Skin Type: </strong>"
+                   f"{animal['characteristics']['skin_type']}</li>\n")
     output += '</ul>'
     output += '</div>'
     output += '</li>'
     return output
 
 
-def return_animals_data(animals, skin_type=""):
+def return_animals_output(animals):
     """ Returns the animal data """
     output = ""
     for animal in animals:
-        if skin_type == "":
-            output += serialize_animal(animal)
-        elif skin_type.lower() in animal["characteristics"]["skin_type"].lower():
-            output += serialize_animal(animal)
+        output += serialize_animal(animal)
     return output
 
 
@@ -85,19 +66,16 @@ def write_animals_html(file_path, html):
     """ Writes the animal data into an HTML file """
     with open(file_path, "w", encoding="utf-8") as file:
         file.write(html)
-    print("\nSuccess! The 'animals.html' file has been updated.")
+    print("Success! Website was successfully generated to the file 'animals.html'.")
 
 
 def main():
     """ Main function that handles the program logic """
     # load animals data
-    animals_data = extract_animals_data()
-
-    # load skin types
-    skin_type_input = get_user_skin_type_input(animals_data)
+    animals_data = return_animals_data()
 
     # serialized animal data
-    animals_output = return_animals_data(animals_data,skin_type_input)
+    animals_output = return_animals_output(animals_data)
 
     # load html template
     html_orig = load_html_template('animals_template.html')
