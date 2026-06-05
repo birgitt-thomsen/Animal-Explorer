@@ -1,6 +1,6 @@
 """ Script to update an HTML template with serialized animal data. """
 
-from data_fetcher import fetch_data
+import data_fetcher
 
 TARGET_HTML = "__REPLACE_ANIMALS_INFO__"
 
@@ -8,7 +8,7 @@ TARGET_HTML = "__REPLACE_ANIMALS_INFO__"
 def return_animals_data():
     """ Takes input from the user and fetches animals information """
     animal_input = input("Enter a name of an animal: ")
-    animals = fetch_data(animal_input)
+    animals = data_fetcher.fetch_data(animal_input)
     return animals, animal_input
 
 
@@ -74,6 +74,7 @@ def write_animals_html(file_path, html):
 
 def main():
     """ Main function that handles the program logic """
+
     # load animals data
     data = return_animals_data()
     animals_data = data[0]
