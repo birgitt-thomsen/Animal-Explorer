@@ -2,9 +2,12 @@
 Handles animals the api request to extract animal data
 points.
 """
+import os
 import requests
+from dotenv import load_dotenv
 
-API_KEY = "QKBRfsocc4sCpgWU4ynUcog2zTJwM7RmSs6JIAzz"
+load_dotenv()
+API_KEY = os.getenv('API_KEY')
 REQUEST_URL = "https://api.api-ninjas.com/v1/animals"
 
 
